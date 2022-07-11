@@ -56,4 +56,9 @@ def parameter_parser():
                         default=0.0001,
 	                help="Down sampling rate of features. Default is 0.0001.")
 
+    parser.add_argument("--seed",
+                        type=int,
+                        default=666,
+	                help="Seed for the random number generator. Default is 666.")
+
     return parser.parse_args()
