@@ -128,7 +128,7 @@ def get_embedding( model, files, dimensions, output_path = None):
 
 def predict_embedding(model, input_path, output_path = None, n_jobs = 4, wl_iterations = 2, dimensions = 128):
     graphs = glob.glob(os.path.join(input_path, "*.json"))
-    docs = Parallel(n_jobs=n_jobs)(delayed(feature_extractor)(g, wl_iterations) for g in tqdm(graphs))
+    docs = Parallel(n_jobs=n_jobs)(delayed(feature_extractor)(g, wl_iterations) for g in graphs)
     out = []
     for doc in docs:
         vec = model.infer_vector(doc.words).tolist()
@@ -149,9 +149,9 @@ def train_embedding (input_path = './dataset/', workers = 4,  wl_iterations = 2,
     min_count = 5, down_sampling = 0.0001, learning_rate =0.025,  epochs = 1, seed = 666):
 
     graphs = glob.glob(os.path.join(input_path, "*.json"))
-    print("\nFeature extraction started.\n")
-    document_collections = Parallel(n_jobs=workers)(delayed(feature_extractor)(g, wl_iterations) for g in tqdm(graphs))
-    print("\nOptimization started.\n")
+    # print("\nFeature extraction started.\n")
+    document_collections = Parallel(n_jobs=workers)(delayed(feature_extractor)(g, wl_iterations) for g in graphs)
+    # print("\nOptimization started.\n")
     
 
     model = Doc2Vec(document_collections,
@@ -160,7 +160,7 @@ def train_embedding (input_path = './dataset/', workers = 4,  wl_iterations = 2,
                     min_count=min_count,
                     dm=0,
                     sample=down_sampling,
-                    workers=1, # for determinism 
+                    workers=workers, # for determinism // changed to speed up testing
                     epochs=epochs,
                     alpha=learning_rate,
                     seed = seed)    
